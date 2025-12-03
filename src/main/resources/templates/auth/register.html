@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register - Career Path</title>
+    <link rel="stylesheet" th:href="@{/assets/vendor/bootstrap-5.3.8-dist/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #1abc9c;
+            --dark-teal: #16a085;
+            --bg-color: #1abc9c;
+        }
+
+        body { 
+            background-color: var(--bg-color);
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .register-card { 
+            width: 100%; 
+            max-width: 450px; 
+            border: none;
+            border-radius: 8px; 
+            overflow: hidden; 
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2); 
+            background-color: white;
+        }
+
+        .card-header { 
+            background-color: var(--dark-teal); 
+            color: white; 
+            padding: 25px 20px; 
+            text-align: center; 
+            font-size: 24px;
+            font-weight: 600;
+            border: none;
+        }
+
+        .card-body { padding: 30px; }
+
+        .custom-input-group {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .input-icon {
+            background-color: var(--dark-teal);
+            color: white;
+            width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .form-control {
+            border: none;
+            height: 50px;
+            padding-left: 15px;
+            font-size: 16px;
+            color: #555;
+        }
+        
+        .form-control:focus {
+            box-shadow: none;
+            background-color: #f9f9f9;
+        }
+
+        .btn-register { 
+            background-color: var(--dark-teal); 
+            border: none; 
+            color: white;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 18px;
+            border-radius: 5px;
+            width: 100%;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover { 
+            background-color: #149174;
+            color: white;
+        }
+        
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .links a {
+            color: var(--dark-teal);
+            font-weight: bold;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="card register-card">
+        <div class="card-header">
+            Signup Form
+        </div>
+        <div class="card-body">
+            
+            <form th:action="@{/auth/register/post}" th:object="${registerForm}" method="post">
+                
+                <div class="custom-input-group">
+                    <span class="input-icon"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" th:field="*{name}" placeholder="Full Name" required>
+                </div>
+                <small class="text-danger d-block mb-2" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+
+                <div class="custom-input-group">
+                    <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                    <input type="email" class="form-control" th:field="*{email}" placeholder="Email Address" required>
+                </div>
+                <small class="text-danger d-block mb-2" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+
+                <div class="custom-input-group">
+                    <span class="input-icon"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control" th:field="*{password}" placeholder="Password" required>
+                </div>
+                <small class="text-danger d-block mb-2" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+
+                <button type="submit" class="btn btn-register">Signup</button>
+
+                <div class="links">
+                    Already a member? <a href="/auth/login">Login now</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
