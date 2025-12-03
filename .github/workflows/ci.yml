@@ -12,18 +12,18 @@ jobs:
 
     services:
       postgres:
-        image: postgres:16
+        image: postgres:18
         env:
           POSTGRES_DB: db_career_path
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
@@ -31,51 +31,52 @@ jobs:
       - name: Setup Java 25
         uses: actions/setup-java@v4
         with:
-          java-version: '25'
+          java-version: '25' # Pastikan Java 25 sudah tersedia di actions/setup-java, jika error ganti ke '21' atau '17'
           distribution: 'temurin'
           cache: maven
 
-      - name: Wait for PostgreSQL
-        run: |
-          for i in {1..10}; do
-            pg_isready -h localhost -p 5432 -U postgres && break
-            echo "Waiting for postgres..."
-            sleep 5
-          done
-
-      # Jalankan unit test + coverage
+      # Langkah "Wait for PostgreSQL" dihapus karena sudah ditangani oleh 'options' di service di atas.
+      # Service container tidak akan siap sampai health check lulus.
+      
+      # 🔹 PERBAIKAN UTAMA DI SINI
       - name: Run tests with coverage
+        env:
+          # Kita set environment variable di sini agar otomatis terbaca Spring Boot
+          # Ini lebih aman daripada mengetik panjang dengan -D di command line
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/db_career_path
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           chmod +x mvnw
           ./mvnw clean test jacoco:check
-          -Dspring.datasource.url=jdbc:postgresql://localhost:5432/db_career_path \
-          -Dspring.datasource.username=postgres \
-          -Dspring.datasource.password=postgres
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: target/site/jacoco/
+          if-no-files-found: ignore
 
-      # 🔹 Tambahkan build JAR
+      # 🔹 Build JAR
       - name: Build Spring Boot JAR
         run: |
           ./mvnw clean package -DskipTests
 
-      # 🔹 Verifikasi bahwa JAR memiliki manifest dan dapat dijalankan
+      # 🔹 Verifikasi JAR
       - name: Verify executable JAR
         run: |
           echo "Checking manifest..."
-          jar tf target/*.jar | grep META-INF/MANIFEST.MF
-          jar xf target/*.jar META-INF/MANIFEST.MF
-          cat META-INF/MANIFEST.MF
+          # Menggunakan find karena nama jar mungkin ada versinya
+          JAR_FILE=$(find target -name "*.jar" | head -n 1)
+          jar tf $JAR_FILE | grep META-INF/MANIFEST.MF
+          
           echo "Testing java -jar startup..."
-          java -jar target/*.jar --spring.main.web-application-type=none --logging.level.root=OFF &
+          # Menjalankan background process
+          java -jar $JAR_FILE --spring.main.web-application-type=none --logging.level.root=OFF &
+          PID=$!
           sleep 10
-          pkill -f 'java -jar' || true
+          kill $PID || true
 
-      # 🔹 Upload hasil build (opsional)
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
