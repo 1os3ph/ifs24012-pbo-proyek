@@ -5,38 +5,78 @@
 </head>
 <body>
     <div layout:fragment="content">
-        <h2>Dashboard Lamaran</h2>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Dashboard Lamaran</h2>
+            <a href="/jobs/create" class="btn btn-primary"><i class="fas fa-plus"></i> Tambah</a>
+        </div>
         
-        <!-- CHART -->
-        <div class="card mb-4">
+        <!-- CHART (Poin 8) -->
+        <div class="card mb-4 shadow-sm">
             <div class="card-body">
-                <canvas id="statusChart" style="max-height: 300px;"></canvas>
+                <canvas id="statusChart" style="max-height: 250px;"></canvas>
             </div>
         </div>
 
-        <!-- LIST DATA -->
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Perusahaan</th>
-                    <th>Posisi</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="job : ${jobs}">
-                    <td th:text="${job.companyName}">Google</td>
-                    <td th:text="${job.position}">Dev</td>
-                    <td th:text="${job.status}">Applied</td>
-                    <td>
-                        <form th:action="@{'/jobs/delete/' + ${job.id}}" method="post">
-                             <button class="btn btn-danger btn-sm">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- LIST DATA (Poin 6) -->
+        <div class="card shadow-sm">
+            <div class="card-body table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Logo</th>
+                            <th>Perusahaan</th>
+                            <th>Posisi</th>
+                            <th>Platform</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="job : ${jobs}">
+                            <td>
+                                <!-- Menampilkan Gambar (Poin 4 & 9) -->
+                                <img th:if="${job.companyLogo != null}" 
+                                     th:src="@{'/uploads/' + ${job.companyLogo}}" 
+                                     class="rounded-circle border" 
+                                     width="40" height="40" 
+                                     style="object-fit: cover;">
+                                <span th:unless="${job.companyLogo != null}" class="badge bg-secondary">No Logo</span>
+                            </td>
+                            <td class="fw-bold" th:text="${job.companyName}">Google</td>
+                            <td>
+                                <div th:text="${job.position}">Dev</div>
+                                <small class="text-muted" th:text="${#numbers.formatDecimal(job.expectedSalary, 0, 'COMMA', 0, 'POINT')}">Gaji</small>
+                            </td>
+                            <td><span class="badge bg-info text-dark" th:text="${job.platform}">LinkedIn</span></td>
+                            <td>
+                                <span th:class="'badge ' + 
+                                    (${job.status == 'Applied'} ? 'bg-secondary' : 
+                                    (${job.status == 'Interview'} ? 'bg-warning' : 
+                                    (${job.status == 'Offered'} ? 'bg-success' : 'bg-danger')))" 
+                                    th:text="${job.status}">Applied</span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <!-- Tombol EDIT (Poin 3) -->
+                                    <a th:href="@{'/jobs/edit/' + ${job.id}}" class="btn btn-warning btn-sm text-white">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    
+                                    <!-- Tombol HAPUS (Poin 5) -->
+                                    <form th:action="@{'/jobs/delete/' + ${job.id}}" method="post" onsubmit="return confirm('Yakin hapus?');">
+                                         <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div th:if="${#lists.isEmpty(jobs)}" class="text-center py-3 text-muted">
+                    Belum ada data lamaran.
+                </div>
+            </div>
+        </div>
     </div>
 
     <div layout:fragment="scripts">
@@ -55,6 +95,10 @@
                         data: [applied, interview, rejected, offered],
                         backgroundColor: ['#6c757d', '#ffc107', '#dc3545', '#198754']
                     }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true
                 }
             });
         </script>

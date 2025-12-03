@@ -1,20 +1,90 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/main}">
-<head><title>Form</title></head>
+<head><title>Form Lamaran</title></head>
 <body>
     <div layout:fragment="content">
-        <h2>Form Lamaran</h2>
-        <form th:action="@{/jobs/create}" th:object="${jobForm}" method="post" enctype="multipart/form-data">
-            <input type="text" th:field="*{companyName}" placeholder="Perusahaan" class="form-control mb-2" />
-            <input type="text" th:field="*{position}" placeholder="Posisi" class="form-control mb-2" />
-            <select th:field="*{status}" class="form-control mb-2">
-                <option value="Applied">Applied</option>
-                <option value="Interview">Interview</option>
-                <option value="Rejected">Rejected</option>
-                <option value="Offered">Offered</option>
-            </select>
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </form>
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h4 class="mb-0">Form Lamaran Kerja</h4>
+            </div>
+            <div class="card-body">
+                
+                <!-- enctype WAJIB ada untuk upload file -->
+                <form th:action="@{${jobForm.id == null} ? '/jobs/create' : '/jobs/edit'}" 
+                      th:object="${jobForm}" 
+                      method="post" 
+                      enctype="multipart/form-data">
+                    
+                    <!-- Hidden ID untuk keperluan Edit -->
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:field="*{existingLogoPath}">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Perusahaan</label>
+                            <input type="text" th:field="*{companyName}" class="form-control" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Posisi</label>
+                            <input type="text" th:field="*{position}" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Platform</label>
+                            <select th:field="*{platform}" class="form-select">
+                                <option value="LinkedIn">LinkedIn</option>
+                                <option value="JobStreet">JobStreet</option>
+                                <option value="Glints">Glints</option>
+                                <option value="Website">Website Karir</option>
+                                <option value="Referral">Referral</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status</label>
+                            <select th:field="*{status}" class="form-select">
+                                <option value="Applied">Applied</option>
+                                <option value="Interview">Interview</option>
+                                <option value="Rejected">Rejected</option>
+                                <option value="Offered">Offered</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ekspektasi Gaji</label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rp</span>
+                                <input type="number" th:field="*{expectedSalary}" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tanggal Melamar</label>
+                            <input type="date" th:field="*{appliedDate}" class="form-control" />
+                        </div>
+                    </div>
+
+                    <!-- INPUT UPLOAD GAMBAR (Poin 4) -->
+                    <div class="mb-3">
+                        <label class="form-label">Logo Perusahaan</label>
+                        <input type="file" th:field="*{logoFile}" class="form-control" accept="image/*" />
+                        <small class="text-muted" th:if="${jobForm.id != null}">Biarkan kosong jika tidak ingin mengubah logo.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Catatan</label>
+                        <textarea th:field="*{notes}" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="/jobs" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary">Simpan Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
 </html>
