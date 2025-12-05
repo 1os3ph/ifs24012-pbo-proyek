@@ -83,7 +83,7 @@ public class AuthView {
             return ConstUtil.TEMPLATE_PAGES_AUTH_LOGIN;
         }
 
-        // === PROSES LOGIN MANUAL (PENTING) ===
+        // === PROSES LOGIN ===
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -156,5 +156,21 @@ public class AuthView {
     public String logout(HttpSession session) {
         session.invalidate(); // Hapus session
         return "redirect:/auth/login";
+    }
+
+    @GetMapping("/profile")
+    public String showProfile(Model model) {
+        // Ambil user yang sedang login
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return "redirect:/auth/login";
+        }
+
+        // Ambil data user dari database berdasarkan email yang login
+        // (Kita query lagi biar datanya paling update)
+        User user = (User) auth.getPrincipal(); // Atau userService.getUserByEmail(auth.getName())
+        
+        model.addAttribute("user", user);
+        return "auth/profile"; // Nama file HTML yang akan kita buat
     }
 }

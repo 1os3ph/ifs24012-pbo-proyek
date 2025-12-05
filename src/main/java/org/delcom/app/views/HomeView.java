@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeView {
 
-    // HAPUS JobApplicationService karena tidak dipakai di sini
-    // (Logika data ada di JobApplicationView)
-
     @GetMapping("/")
     public String home(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

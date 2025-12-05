@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/main}">
+<head>
+    <title>Profil Saya</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center py-4">
+                        <div class="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4 th:text="${user.name}">Nama User</h4>
+                        <span class="badge bg-light text-dark">User</span>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-3 border-bottom pb-2">
+                            <label class="small text-muted text-uppercase">Nama Lengkap</label>
+                            <p class="h5" th:text="${user.name}">Budi</p>
+                        </div>
+                        
+                        <div class="mb-3 border-bottom pb-2">
+                            <label class="small text-muted text-uppercase">Email Address</label>
+                            <p class="h5" th:text="${user.email}">email@contoh.com</p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="small text-muted text-uppercase">Bergabung Sejak</label>
+                            <!-- Menampilkan tanggal pembuatan akun -->
+                            <p class="h5" th:text="${#temporals.format(user.createdAt, 'dd MMMM yyyy')}">01 Januari 2024</p>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center bg-white py-3">
+                        <a href="/jobs" class="btn btn-outline-primary"><i class="fas fa-arrow-left me-2"></i>Kembali ke Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
