@@ -1,8 +1,10 @@
 package org.delcom.app.views;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.delcom.app.dto.LoginForm;
+import org.delcom.app.dto.UserProfileDTO;
 import org.delcom.app.dto.RegisterForm;
 import org.delcom.app.entities.User;
 import org.delcom.app.services.UserService;
@@ -172,5 +174,61 @@ public class AuthView {
         
         model.addAttribute("user", user);
         return "auth/profile"; // Nama file HTML yang akan kita buat
+    }
+
+    @GetMapping("/profile/edit")
+    public String editProfile(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return "redirect:/auth/login";
+        }
+
+        // Ambil data terbaru dari DB
+        User currentUser = (User) auth.getPrincipal();
+        User dbUser = userService.getUserById(currentUser.getId());
+
+        // Masukkan data lama ke Form DTO
+        UserProfileDTO dto = new UserProfileDTO();
+        dto.setName(dbUser.getName());
+        
+        model.addAttribute("profileForm", dto);
+        return "auth/edit-profile"; // Mengarah ke edit-profile.html
+    }
+
+    // PROSES SIMPAN PROFIL (POST)
+    @PostMapping("/profile/edit")
+    public String updateProfile(@Valid @ModelAttribute("profileForm") UserProfileDTO profileForm,
+                                BindingResult bindingResult,
+                                RedirectAttributes redirectAttributes,
+                                HttpSession session) {
+        
+        if (bindingResult.hasErrors()) {
+            return "auth/edit-profile";
+        }
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) auth.getPrincipal();
+
+        try {
+            // 1. Update Data di Database
+            User updatedUser = userService.updateUserProfile(currentUser.getId(), profileForm);
+
+            // 2. UPDATE SESSION (PENTING!)
+            // Agar nama/foto di Navbar langsung berubah tanpa logout
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                    updatedUser, 
+                    auth.getCredentials(), 
+                    auth.getAuthorities());
+            
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+
+            redirectAttributes.addFlashAttribute("success", "Profil berhasil diperbarui!");
+
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Gagal upload foto: " + e.getMessage());
+        }
+
+        return "redirect:/auth/profile";
     }
 }

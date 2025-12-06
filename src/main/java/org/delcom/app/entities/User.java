@@ -35,6 +35,9 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "profile_picture")
+    private String profilePicture;
+
     // ======= Constructors =======
 
     public User() {
@@ -77,6 +80,14 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     public void setPassword(String password) {
