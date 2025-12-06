@@ -1,6 +1,6 @@
 package org.delcom.app.services;
 
-import org.delcom.app.dto.UserProfileDTO;
+import org.delcom.app.dto.ProfileForm; // Ubah import ini
 import org.delcom.app.entities.User;
 import org.delcom.app.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Value("${app.upload.dir}") // Ambil path folder upload
+    @Value("${app.upload.dir}")
     private String uploadDir;
 
     public User getUserById(UUID id) {
@@ -41,23 +41,18 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // === FITUR BARU: UPDATE PROFIL ===
-    public User updateUserProfile(UUID userId, UserProfileDTO dto) throws IOException {
+    // Ubah parameter jadi ProfileForm
+    public User updateUserProfile(UUID userId, ProfileForm dto) throws IOException {
         User user = getUserById(userId);
         if (user == null) return null;
 
-        // 1. Update Nama
         user.setName(dto.getName());
 
-        // 2. Update Foto (Jika ada file yang diupload)
         MultipartFile file = dto.getProfilePicture();
         if (file != null && !file.isEmpty()) {
-            // Bersihkan nama file
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-            // Buat nama unik (biar tidak bentrok)
             String uniqueFileName = "user_" + userId + "_" + UUID.randomUUID() + "_" + fileName;
 
-            // Simpan file ke folder
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -66,8 +61,6 @@ public class UserService {
             try (var inputStream = file.getInputStream()) {
                 Path filePath = uploadPath.resolve(uniqueFileName);
                 Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-                
-                // Simpan nama file ke DB
                 user.setProfilePicture(uniqueFileName);
             }
         }

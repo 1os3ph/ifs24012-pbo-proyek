@@ -25,27 +25,26 @@ public class JobApplicationView {
         this.jobService = jobService;
     }
 
-    private User getAuthUser() {
+    // --- HELPER UNTUK LAYOUT UTAMA (WAJIB ADA) ---
+    @ModelAttribute("user")
+    public User addCurrentUserToModel() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof User) {
             return (User) auth.getPrincipal();
         }
         return null;
     }
+    // ----------------------------------------------
 
-    // LIST DATA (Dashboard)
     @GetMapping
     public String listJobs(Model model) {
-        User user = getAuthUser();
-        // Kalau belum login, lempar ke halaman login
+        User user = addCurrentUserToModel();
         if (user == null) return "redirect:/auth/login";
 
         List<JobApplication> jobs = jobService.getAllJobApplications(user.getId());
         model.addAttribute("jobs", jobs);
-        model.addAttribute("user", user);
         
-        // Untuk Chart sederhana (Pie Chart Status)
-        // Kita hitung manual disini biar mudah ditampilkan di HTML
+        // Hitung Statistik
         long appliedCount = jobs.stream().filter(j -> "Applied".equals(j.getStatus())).count();
         long interviewCount = jobs.stream().filter(j -> "Interview".equals(j.getStatus())).count();
         long rejectedCount = jobs.stream().filter(j -> "Rejected".equals(j.getStatus())).count();
@@ -59,20 +58,16 @@ public class JobApplicationView {
         return "jobs/list";
     }
 
-    // FORM TAMBAH
     @GetMapping("/create")
     public String createPage(Model model) {
-        User user = getAuthUser();
-        if (user == null) return "redirect:/auth/login";
-
+        if (addCurrentUserToModel() == null) return "redirect:/auth/login";
         model.addAttribute("jobForm", new JobApplicationDTO());
         return "jobs/form";
     }
 
-    // PROSES SIMPAN (CREATE)
     @PostMapping("/create")
     public String saveJob(@ModelAttribute JobApplicationDTO dto, RedirectAttributes redirectAttributes) {
-        User user = getAuthUser();
+        User user = addCurrentUserToModel();
         if (user == null) return "redirect:/auth/login";
 
         try {
@@ -84,16 +79,14 @@ public class JobApplicationView {
         return "redirect:/jobs";
     }
     
-    // FORM EDIT
     @GetMapping("/edit/{id}")
     public String editPage(@PathVariable UUID id, Model model) {
-        User user = getAuthUser();
+        User user = addCurrentUserToModel();
         if (user == null) return "redirect:/auth/login";
         
         JobApplication job = jobService.getJobApplicationById(id, user.getId());
         if (job == null) return "redirect:/jobs";
         
-        // Convert Entity to DTO
         JobApplicationDTO dto = new JobApplicationDTO();
         dto.setId(job.getId());
         dto.setCompanyName(job.getCompanyName());
@@ -103,35 +96,33 @@ public class JobApplicationView {
         dto.setExpectedSalary(job.getExpectedSalary());
         dto.setAppliedDate(job.getAppliedDate());
         dto.setNotes(job.getNotes());
-        dto.setExistingLogoPath(job.getCompanyLogo()); // Penting buat preview gambar
+        dto.setExistingLogoPath(job.getCompanyLogo());
         
         model.addAttribute("jobForm", dto);
         return "jobs/form";
     }
     
-    // PROSES UPDATE
     @PostMapping("/edit")
     public String updateJob(@ModelAttribute JobApplicationDTO dto, RedirectAttributes redirectAttributes) {
-        User user = getAuthUser();
+        User user = addCurrentUserToModel();
         if (user == null) return "redirect:/auth/login";
 
         try {
             jobService.saveJobApplication(dto, user.getId());
-            redirectAttributes.addFlashAttribute("success", "Lamaran berhasil diperbarui!");
+            redirectAttributes.addFlashAttribute("success", "Perubahan disimpan!");
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("error", "Gagal upload gambar.");
         }
         return "redirect:/jobs";
     }
 
-    // DELETE
     @PostMapping("/delete/{id}")
     public String deleteJob(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
-        User user = getAuthUser();
+        User user = addCurrentUserToModel();
         if (user == null) return "redirect:/auth/login";
 
         jobService.deleteJobApplication(id, user.getId());
-        redirectAttributes.addFlashAttribute("success", "Data berhasil dihapus.");
+        redirectAttributes.addFlashAttribute("success", "Data dihapus.");
         return "redirect:/jobs";
     }
 }

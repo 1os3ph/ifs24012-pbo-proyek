@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class UserProfileDTO {
+public class ProfileForm {
     private String name;
     private MultipartFile profilePicture;
 }

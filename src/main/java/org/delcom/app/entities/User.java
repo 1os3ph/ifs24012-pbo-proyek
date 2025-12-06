@@ -1,116 +1,63 @@
 package org.delcom.app.entities;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import jakarta.persistence.*;
+import lombok.Data; // Pakai Lombok @Data biar ringkas
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "users")
-@JsonPropertyOrder({ "id", "name", "email", "createdAt", "updatedAt" })
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class User {
+@Data
+public class User implements UserDetails {
 
-    // ======= Attributes =======
     @Id
-    @GeneratedValue(generator = "UUID")
-    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "uuid")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "email", nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
-    @Column(name = "profile_picture")
+    // FIELD PENTING UNTUK FOTO PROFIL
     private String profilePicture;
 
-    // ======= Constructors =======
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
-    public User() {
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    // --- Implementasi UserDetails (Security) ---
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
-    public User(String email, String password) {
-        this("", email, password);
+    @Override
+    public String getUsername() {
+        return email; // Login pakai email
     }
 
-    public User(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
-
-    // ======= Getters and Setters =======
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    // ======= @PrePersist & @PreUpdate =======
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+    @Override
+    public boolean isEnabled() { return true; }
 }
