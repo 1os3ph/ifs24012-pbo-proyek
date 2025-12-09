@@ -18,14 +18,11 @@
             border-radius: 10px;
             font-size: 1.2rem;
         }
-        .company-logo-placeholder {
-            width: 40px; height: 40px;
-            background-color: #e9ecef;
-            color: #6c757d;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: bold;
-            font-size: 0.8rem;
+        .logo-container {
+            width: 48px; 
+            height: 48px;
+            background-color: #ffffff;
+            flex-shrink: 0;
         }
         .table-card {
             border-radius: 12px;
@@ -37,7 +34,7 @@
 <body>
     <div layout:fragment="content">
         
-        <!-- 1. Header Section -->
+        <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h3 class="fw-bold text-dark mb-0">Dashboard</h3>
@@ -48,16 +45,15 @@
             </a>
         </div>
 
-        <!-- Alert Notifikasi -->
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm border-0" role="alert">
             <i class="fas fa-check-circle me-2"></i> <span th:text="${success}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
-        <!-- 2. Summary Cards (Ringkasan Angka) -->
+        <!-- 2. Summary Cards -->
         <div class="row g-3 mb-4">
             <!-- Applied -->
-            <div class="col-md-3">
+            <div class="col-md">
                 <div class="card stat-card bg-white shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
                         <div class="icon-box bg-light text-secondary me-3">
@@ -71,7 +67,7 @@
                 </div>
             </div>
             <!-- Interview -->
-            <div class="col-md-3">
+            <div class="col-md">
                 <div class="card stat-card bg-white shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
                         <div class="icon-box bg-warning bg-opacity-10 text-warning me-3">
@@ -85,7 +81,7 @@
                 </div>
             </div>
             <!-- Offered -->
-            <div class="col-md-3">
+            <div class="col-md">
                 <div class="card stat-card bg-white shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
                         <div class="icon-box bg-success bg-opacity-10 text-success me-3">
@@ -98,8 +94,22 @@
                     </div>
                 </div>
             </div>
+            <!-- Hired (BARU) -->
+            <div class="col-md">
+                <div class="card stat-card bg-white shadow-sm h-100 border-primary border-2">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary me-3">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-0 small">Hired</h6>
+                            <h4 class="fw-bold mb-0" th:text="${statHired}">0</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Rejected -->
-            <div class="col-md-3">
+            <div class="col-md">
                 <div class="card stat-card bg-white shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
                         <div class="icon-box bg-danger bg-opacity-10 text-danger me-3">
@@ -115,7 +125,7 @@
         </div>
 
         <div class="row g-4">
-            <!-- 3. Tabel Data (Kiri, lebih lebar) -->
+            <!-- 3. Tabel Data -->
             <div class="col-lg-8">
                 <div class="card table-card bg-white h-100">
                     <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
@@ -143,17 +153,16 @@
                                     <tr th:each="job : ${jobs}">
                                         <td class="ps-4">
                                             <div class="d-flex align-items-center">
-                                                <!-- Logic Logo: Jika ada tampilkan, jika tidak pakai inisial -->
-                                                <img th:if="${job.companyLogo != null}" 
-                                                     th:src="@{'/uploads/' + ${job.companyLogo}}" 
-                                                     class="rounded-circle border" width="40" height="40" style="object-fit: cover;">
-                                                
-                                                <div th:unless="${job.companyLogo != null}" 
-                                                     class="company-logo-placeholder">
-                                                    <span th:text="${#strings.substring(job.companyName,0,1)}">C</span>
+                                                <div class="logo-container d-flex align-items-center justify-content-center border rounded-3 p-1 me-3 shadow-sm">
+                                                    <img th:if="${job.companyLogo != null}" 
+                                                         th:src="@{'/uploads/' + ${job.companyLogo}}" 
+                                                         class="img-fluid" 
+                                                         style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                                    <span th:unless="${job.companyLogo != null}" 
+                                                          class="fw-bold text-secondary fs-5"
+                                                          th:text="${#strings.substring(job.companyName,0,1)}">C</span>
                                                 </div>
-                                                
-                                                <div class="ms-3">
+                                                <div>
                                                     <span class="d-block fw-bold text-dark" th:text="${job.companyName}">Google</span>
                                                     <small class="text-muted" th:text="${job.appliedDate}">2023-12-01</small>
                                                 </div>
@@ -171,26 +180,21 @@
                                             <span class="text-muted small" th:unless="${job.platform != null}">-</span>
                                         </td>
                                         <td>
-                                            <!-- Badge Status dengan warna dinamis -->
+                                            <!-- Logic Badge Warna Baru termasuk Hired -->
                                             <span th:class="'badge rounded-pill px-3 ' + 
                                                 (${job.status == 'Applied'} ? 'bg-secondary bg-opacity-10 text-secondary' : 
                                                 (${job.status == 'Interview'} ? 'bg-warning bg-opacity-10 text-warning' : 
-                                                (${job.status == 'Offered'} ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger')))" 
+                                                (${job.status == 'Offered'} ? 'bg-success bg-opacity-10 text-success' : 
+                                                (${job.status == 'Hired'} ? 'bg-primary bg-opacity-10 text-primary' : 
+                                                'bg-danger bg-opacity-10 text-danger'))))" 
                                                 th:text="${job.status}">Applied</span>
                                         </td>
                                         <td class="text-end pe-4">
                                             <div class="d-flex justify-content-end gap-2">
-                                                <a th:href="@{'/jobs/edit/' + ${job.id}}" class="btn btn-sm btn-light text-primary" data-bs-toggle="tooltip" title="Edit">
-                                                    <i class="fas fa-pen"></i>
-                                                </a>
-                                                
-                                                <!-- Tombol Delete -->
-                                                <button class="btn btn-sm btn-light text-danger" data-bs-toggle="modal" th:data-bs-target="'#deleteModal' + ${job.id}">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                                <a th:href="@{'/jobs/edit/' + ${job.id}}" class="btn btn-sm btn-light text-primary"><i class="fas fa-pen"></i></a>
+                                                <button class="btn btn-sm btn-light text-danger" data-bs-toggle="modal" th:data-bs-target="'#deleteModal' + ${job.id}"><i class="fas fa-trash"></i></button>
                                             </div>
-
-                                            <!-- Modal Delete (Tetap disembunyikan) -->
+                                            <!-- Modal Delete -->
                                             <div class="modal fade text-start" th:id="'deleteModal' + ${job.id}" tabindex="-1">
                                                 <div class="modal-dialog modal-dialog-centered">
                                                     <div class="modal-content">
@@ -199,13 +203,12 @@
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <div class="modal-body text-center py-4">
-                                                            <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
-                                                            <p>Yakin ingin menghapus lamaran di <strong th:text="${job.companyName}"></strong>?</p>
+                                                            <p>Hapus lamaran di <strong th:text="${job.companyName}"></strong>?</p>
                                                         </div>
                                                         <div class="modal-footer border-0 justify-content-center">
-                                                            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Batal</button>
+                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
                                                             <form th:action="@{'/jobs/delete/' + ${job.id}}" method="post">
-                                                                <button type="submit" class="btn btn-danger px-4">Ya, Hapus</button>
+                                                                <button type="submit" class="btn btn-danger">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -220,7 +223,7 @@
                 </div>
             </div>
 
-            <!-- 4. Chart (Kanan, lebih kecil) -->
+            <!-- 4. Chart -->
             <div class="col-lg-4">
                 <div class="card table-card bg-white h-100">
                     <div class="card-header bg-white border-0 py-3">
@@ -242,20 +245,20 @@
 
     <div layout:fragment="scripts">
         <script th:inline="javascript">
-            /* Data dari Controller */
             var applied = /*[[${statApplied}]]*/ 0;
             var interview = /*[[${statInterview}]]*/ 0;
             var rejected = /*[[${statRejected}]]*/ 0;
             var offered = /*[[${statOffered}]]*/ 0;
+            var hired = /*[[${statHired}]]*/ 0; // Data baru
 
             var ctx = document.getElementById('statusChart').getContext('2d');
             var myChart = new Chart(ctx, {
-                type: 'doughnut', // Ganti ke Doughnut agar lebih modern
+                type: 'doughnut',
                 data: {
-                    labels: ['Applied', 'Interview', 'Rejected', 'Offered'],
+                    labels: ['Applied', 'Interview', 'Rejected', 'Offered', 'Hired'],
                     datasets: [{
-                        data: [applied, interview, rejected, offered],
-                        backgroundColor: ['#6c757d', '#ffc107', '#dc3545', '#198754'],
+                        data: [applied, interview, rejected, offered, hired],
+                        backgroundColor: ['#6c757d', '#ffc107', '#dc3545', '#198754', '#0d6efd'],
                         borderWidth: 0,
                         hoverOffset: 4
                     }]
@@ -263,16 +266,8 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%', // Membuat lubang tengah lebih besar
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20
-                            }
-                        }
-                    }
+                    cutout: '70%',
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } }
                 }
             });
         </script>

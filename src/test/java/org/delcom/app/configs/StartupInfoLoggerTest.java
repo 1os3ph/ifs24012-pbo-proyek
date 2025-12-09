@@ -80,4 +80,30 @@ public class StartupInfoLoggerTest {
         assertTrue(output.contains("URL: http://localhost:8080"));
         assertTrue(output.contains("LiveReload: DISABLED"));
     }
+
+    @Test
+    @DisplayName("Harus menangani contextPath yang null menjadi string kosong")
+    void testOnApplicationEvent_WithNullContextPath() {
+        // Arrange
+        lenient().when(mockEnvironment.getProperty("server.port", "8080")).thenReturn("8080");
+        
+        // PENTING: Paksa mock mengembalikan NULL meskipun ada default value di kode asli
+        // Ini untuk memicu baris: if (contextPath == null) { contextPath = ""; }
+        lenient().when(mockEnvironment.getProperty("server.servlet.context-path", "/")).thenReturn(null);
+        
+        lenient().when(mockEnvironment.getProperty("server.address", "localhost")).thenReturn("localhost");
+        lenient().when(mockEnvironment.getProperty("spring.devtools.livereload.enabled", Boolean.class, false)).thenReturn(false);
+        lenient().when(mockEnvironment.getProperty("spring.devtools.livereload.port", "35729")).thenReturn("35729");
+
+        // Act
+        logger.onApplicationEvent(mockEvent);
+        String output = outputStreamCaptor.toString();
+
+        // Assert
+        // Jika contextPath null -> diubah jadi "" -> maka URL menjadi "http://localhost:8080" (tanpa slash di akhir)
+        assertTrue(output.contains("URL: http://localhost:8080"));
+        // Pastikan tidak ada double slash atau string "null"
+        assertTrue(!output.contains("8080null"));
+        assertTrue(!output.contains("8080/"));
+    }
 }

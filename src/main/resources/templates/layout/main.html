@@ -39,11 +39,43 @@
         .sidebar a.nav-link:hover { background: #334155; color: #f8fafc; transform: translateX(5px); }
         .sidebar a.nav-link.active { background: #3b82f6; color: white; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5); }
         
-        /* Styling Logo Area */
-        .logo-container { padding: 25px 20px; border-bottom: 1px solid #334155; margin-bottom: 20px; }
-        .brand-text { letter-spacing: 0.5px; }
+        /* --- STYLE BARU UNTUK LOGO AGAR RAPI --- */
+        .logo-container { 
+            padding: 25px 20px; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+            margin-bottom: 20px; 
+        }
+        
+        .brand-icon {
+            width: 42px; 
+            height: 42px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);
+            flex-shrink: 0;
+        }
 
-        /* 3. STYLING USER PROFILE (BARU) */
+        .brand-text { 
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700; 
+            letter-spacing: -0.5px;
+            line-height: 1.1; 
+            color: #fff;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem; 
+            color: #94a3b8; 
+            display: block; 
+            margin-top: 2px;
+            font-weight: 400;
+        }
+        /* ---------------------------------------- */
+
+        /* 3. STYLING USER PROFILE */
         .user-profile-section {
             background-color: #0f172a;
             border-top: 1px solid #334155;
@@ -80,18 +112,19 @@
         <!-- Sidebar -->
         <div class="sidebar d-flex flex-column flex-shrink-0" style="width: 280px;">
             
-            <!-- LOGO SECTION -->
+            <!-- LOGO SECTION BARU -->
             <div class="logo-container">
-                <div class="d-flex align-items-center">
+                <a href="/jobs" class="d-flex align-items-center text-decoration-none">
                     <!-- Ikon Roket -->
-                    <div class="bg-primary rounded-3 d-flex align-items-center justify-content-center shadow-sm me-3" style="width: 45px; height: 45px;">
-                        <i class="fas fa-rocket text-white fs-5"></i>
+                    <div class="brand-icon me-3">
+                        <i class="fas fa-rocket text-white fs-6"></i>
                     </div>
+                    <!-- Teks -->
                     <div>
-                        <h5 class="fw-bold text-white mb-0 brand-text">CareerTracker</h5>
-                        <small style="font-size: 0.7rem; color: #94a3b8;">Manage Your Future</small>
+                        <h5 class="brand-text mb-0">CareerTracker</h5>
+                        <span class="brand-subtitle">Manage Your Future</span>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- MENU ITEMS -->
@@ -110,12 +143,11 @@
                 </ul>
             </div>
             
-            <!-- USER PROFILE SECTION (YANG KAMU MINTA) -->
+            <!-- USER PROFILE SECTION -->
             <div class="mt-auto user-profile-section">
                 <div class="dropdown dropup">
                     <a href="#" class="user-card dropdown-toggle text-decoration-none" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                         <!-- GAMBAR DINAMIS DARI NAMA USER -->
-                        <!-- UI Avatars: background biru, tulisan putih, inisial nama -->
                         <img th:src="@{'https://ui-avatars.com/api/?name=' + ${user.name} + '&background=3b82f6&color=fff&size=128'}" 
                              alt="User" class="user-avatar">
                         

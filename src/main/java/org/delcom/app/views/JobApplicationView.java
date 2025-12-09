@@ -44,16 +44,20 @@ public class JobApplicationView {
         List<JobApplication> jobs = jobService.getAllJobApplications(user.getId());
         model.addAttribute("jobs", jobs);
         
-        // Hitung Statistik
+        // Hitung Statistik (Tambahkan hiredCount)
         long appliedCount = jobs.stream().filter(j -> "Applied".equals(j.getStatus())).count();
         long interviewCount = jobs.stream().filter(j -> "Interview".equals(j.getStatus())).count();
         long rejectedCount = jobs.stream().filter(j -> "Rejected".equals(j.getStatus())).count();
         long offeredCount = jobs.stream().filter(j -> "Offered".equals(j.getStatus())).count();
         
+        // --- BARU: Hitung status Hired ---
+        long hiredCount = jobs.stream().filter(j -> "Hired".equals(j.getStatus())).count();
+        
         model.addAttribute("statApplied", appliedCount);
         model.addAttribute("statInterview", interviewCount);
         model.addAttribute("statRejected", rejectedCount);
         model.addAttribute("statOffered", offeredCount);
+        model.addAttribute("statHired", hiredCount); // <-- Masukkan ke Model
 
         return "jobs/list";
     }
