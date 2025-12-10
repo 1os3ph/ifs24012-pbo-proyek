@@ -22,6 +22,27 @@
                                 <input type="text" class="form-control" th:field="*{name}" required>
                             </div>
 
+                            <!-- --- BAGIAN BARU: INPUT PENDIDIKAN --- -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Pendidikan Terakhir</label>
+                                    <select class="form-select" th:field="*{lastEducation}">
+                                        <option value="">Pilih Pendidikan...</option>
+                                        <option value="SMA/SMK">SMA/SMK</option>
+                                        <option value="D3">D3 (Diploma)</option>
+                                        <option value="D4">D4 (Sarjana Terapan)</option>
+                                        <option value="S1">S1 (Sarjana)</option>
+                                        <option value="S2">S2 (Magister)</option>
+                                        <option value="S3">S3 (Doktor)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Asal Universitas / Sekolah</label>
+                                    <input type="text" class="form-control" th:field="*{university}" placeholder="Contoh: Institut Teknologi Del">
+                                </div>
+                            </div>
+                            <!-- ------------------------------------- -->
+
                             <!-- Input Upload Foto -->
                             <div class="mb-4">
                                 <label class="form-label">Foto Profil Baru</label>

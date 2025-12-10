@@ -108,6 +108,8 @@ public class AuthView {
         // Pakai ProfileForm (BUKAN UserProfileDTO)
         ProfileForm dto = new ProfileForm();
         dto.setName(user.getName());
+        dto.setUniversity(user.getUniversity());
+        dto.setLastEducation(user.getLastEducation());
         
         model.addAttribute("profileForm", dto);
         return "auth/edit-profile";

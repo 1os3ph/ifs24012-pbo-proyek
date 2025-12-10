@@ -7,4 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProfileForm {
     private String name;
     private MultipartFile profilePicture;
+    private String university;
+    private String lastEducation;
 }

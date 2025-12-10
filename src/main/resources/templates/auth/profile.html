@@ -52,6 +52,20 @@
                             <p class="h5" th:text="${user.email}">email@contoh.com</p>
                         </div>
 
+                        <!-- --- BAGIAN BARU: INFO PENDIDIKAN --- -->
+                        <div class="row mb-3 border-bottom pb-2">
+                            <div class="col-md-6">
+                                <label class="small text-muted text-uppercase">Pendidikan Terakhir</label>
+                                <!-- Tampilkan tanda strip (-) jika data null -->
+                                <p class="h5" th:text="${user.lastEducation != null ? user.lastEducation : '-'}">-</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small text-muted text-uppercase">Asal Universitas</label>
+                                <p class="h5" th:text="${user.university != null ? user.university : '-'}">-</p>
+                            </div>
+                        </div>
+                        <!-- ------------------------------------ -->
+
                         <div class="mb-3">
                             <label class="small text-muted text-uppercase">Bergabung Sejak</label>
                             <p class="h5" th:text="${#temporals.format(user.createdAt, 'dd MMMM yyyy')}">01 Januari 2024</p>

@@ -47,6 +47,8 @@ public class UserService {
         if (user == null) return null;
 
         user.setName(dto.getName());
+        user.setUniversity(dto.getUniversity());
+        user.setLastEducation(dto.getLastEducation());
 
         MultipartFile file = dto.getProfilePicture();
         if (file != null && !file.isEmpty()) {

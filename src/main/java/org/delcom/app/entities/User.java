@@ -33,6 +33,8 @@ public class User implements UserDetails {
 
     // FIELD PENTING UNTUK FOTO PROFIL
     private String profilePicture;
+    private String university;
+    private String lastEducation;
 
     @CreationTimestamp
     @Column(updatable = false)
