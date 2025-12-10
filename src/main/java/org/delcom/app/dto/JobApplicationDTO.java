@@ -12,6 +12,8 @@ public class JobApplicationDTO {
     private UUID id;
     private String companyName;
     private String position;
+    private String workMode;
+    private String location;
     private String platform;
     private String status;
     private Integer expectedSalary;

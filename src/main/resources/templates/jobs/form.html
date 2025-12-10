@@ -9,13 +9,11 @@
             </div>
             <div class="card-body">
                 
-                <!-- enctype WAJIB ada untuk upload file -->
                 <form th:action="@{${jobForm.id == null} ? '/jobs/create' : '/jobs/edit'}" 
                       th:object="${jobForm}" 
                       method="post" 
                       enctype="multipart/form-data">
                     
-                    <!-- Hidden ID untuk keperluan Edit -->
                     <input type="hidden" th:field="*{id}">
                     <input type="hidden" th:field="*{existingLogoPath}">
 
@@ -27,6 +25,25 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Posisi</label>
                             <input type="text" th:field="*{position}" class="form-control" required />
+                        </div>
+                    </div>
+
+                    <!-- BARIS BARU: LOKASI & MODE KERJA -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Lokasi Kantor</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" th:field="*{location}" class="form-control" placeholder="Contoh: Jakarta Selatan / Singapore" />
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mode Kerja</label>
+                            <select th:field="*{workMode}" class="form-select">
+                                <option value="On-site">On-site (WFO)</option>
+                                <option value="Remote">Remote (WFA)</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
                         </div>
                     </div>
 
@@ -67,7 +84,6 @@
                         </div>
                     </div>
 
-                    <!-- INPUT UPLOAD GAMBAR (Poin 4) -->
                     <div class="mb-3">
                         <label class="form-label">Logo Perusahaan</label>
                         <input type="file" th:field="*{logoFile}" class="form-control" accept="image/*" />

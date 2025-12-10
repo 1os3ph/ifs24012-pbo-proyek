@@ -34,6 +34,9 @@ public class JobApplication {
     @Column(nullable = false)
     private String position;
 
+    private String workMode;
+    private String location;
+
     private String platform; // LinkedIn, JobStreet, dll
 
     @Column(nullable = false)

@@ -52,73 +52,43 @@
 
         <!-- 2. Summary Cards -->
         <div class="row g-3 mb-4">
-            <!-- Applied -->
             <div class="col-md">
                 <div class="card stat-card bg-white shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-light text-secondary me-3">
-                            <i class="fas fa-paper-plane"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-0 small">Applied</h6>
-                            <h4 class="fw-bold mb-0" th:text="${statApplied}">0</h4>
-                        </div>
+                        <div class="icon-box bg-light text-secondary me-3"><i class="fas fa-paper-plane"></i></div>
+                        <div><h6 class="text-muted mb-0 small">Applied</h6><h4 class="fw-bold mb-0" th:text="${statApplied}">0</h4></div>
                     </div>
                 </div>
             </div>
-            <!-- Interview -->
             <div class="col-md">
                 <div class="card stat-card bg-white shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-warning bg-opacity-10 text-warning me-3">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-0 small">Interview</h6>
-                            <h4 class="fw-bold mb-0" th:text="${statInterview}">0</h4>
-                        </div>
+                        <div class="icon-box bg-warning bg-opacity-10 text-warning me-3"><i class="fas fa-user-tie"></i></div>
+                        <div><h6 class="text-muted mb-0 small">Interview</h6><h4 class="fw-bold mb-0" th:text="${statInterview}">0</h4></div>
                     </div>
                 </div>
             </div>
-            <!-- Offered -->
             <div class="col-md">
                 <div class="card stat-card bg-white shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-success bg-opacity-10 text-success me-3">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-0 small">Offered</h6>
-                            <h4 class="fw-bold mb-0" th:text="${statOffered}">0</h4>
-                        </div>
+                        <div class="icon-box bg-success bg-opacity-10 text-success me-3"><i class="fas fa-check-circle"></i></div>
+                        <div><h6 class="text-muted mb-0 small">Offered</h6><h4 class="fw-bold mb-0" th:text="${statOffered}">0</h4></div>
                     </div>
                 </div>
             </div>
-            <!-- Hired (BARU) -->
             <div class="col-md">
                 <div class="card stat-card bg-white shadow-sm h-100 border-primary border-2">
                     <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-primary bg-opacity-10 text-primary me-3">
-                            <i class="fas fa-briefcase"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-0 small">Hired</h6>
-                            <h4 class="fw-bold mb-0" th:text="${statHired}">0</h4>
-                        </div>
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary me-3"><i class="fas fa-briefcase"></i></div>
+                        <div><h6 class="text-muted mb-0 small">Hired</h6><h4 class="fw-bold mb-0" th:text="${statHired}">0</h4></div>
                     </div>
                 </div>
             </div>
-            <!-- Rejected -->
             <div class="col-md">
                 <div class="card stat-card bg-white shadow-sm h-100">
                     <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-danger bg-opacity-10 text-danger me-3">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-0 small">Rejected</h6>
-                            <h4 class="fw-bold mb-0" th:text="${statRejected}">0</h4>
-                        </div>
+                        <div class="icon-box bg-danger bg-opacity-10 text-danger me-3"><i class="fas fa-times-circle"></i></div>
+                        <div><h6 class="text-muted mb-0 small">Rejected</h6><h4 class="fw-bold mb-0" th:text="${statRejected}">0</h4></div>
                     </div>
                 </div>
             </div>
@@ -138,7 +108,7 @@
                                     <tr class="text-muted small text-uppercase">
                                         <th class="ps-4">Perusahaan</th>
                                         <th>Posisi & Gaji</th>
-                                        <th>Platform</th>
+                                        <th>Platform & Mode</th>
                                         <th>Status</th>
                                         <th class="text-end pe-4">Aksi</th>
                                     </tr>
@@ -162,9 +132,21 @@
                                                           class="fw-bold text-secondary fs-5"
                                                           th:text="${#strings.substring(job.companyName,0,1)}">C</span>
                                                 </div>
+                                                
                                                 <div>
                                                     <span class="d-block fw-bold text-dark" th:text="${job.companyName}">Google</span>
-                                                    <small class="text-muted" th:text="${job.appliedDate}">2023-12-01</small>
+                                                    
+                                                    <!-- LOKASI & TANGGAL -->
+                                                    <div class="d-flex flex-column">
+                                                        <small class="text-muted" style="font-size: 0.75rem;">
+                                                            <i class="fas fa-map-marker-alt me-1 text-danger"></i> 
+                                                            <span th:text="${job.location != null ? job.location : '-'}">Jakarta</span>
+                                                        </small>
+                                                        <small class="text-muted" style="font-size: 0.75rem;">
+                                                            <i class="fas fa-calendar-alt me-1"></i> 
+                                                            <span th:text="${job.appliedDate}">2023-12-01</span>
+                                                        </small>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -176,11 +158,21 @@
                                             <small class="text-muted" th:unless="${job.expectedSalary != null}">-</small>
                                         </td>
                                         <td>
-                                            <span class="badge bg-light text-dark border" th:if="${job.platform != null}" th:text="${job.platform}">LinkedIn</span>
+                                            <!-- Platform Badge -->
+                                            <span class="badge bg-light text-dark border me-1" th:if="${job.platform != null}" th:text="${job.platform}">LinkedIn</span>
                                             <span class="text-muted small" th:unless="${job.platform != null}">-</span>
+
+                                            <!-- Work Mode Badge -->
+                                            <div class="mt-1" th:if="${job.workMode != null}">
+                                                <span th:class="'badge ' + 
+                                                    (${job.workMode == 'Remote'} ? 'bg-info text-dark' : 
+                                                    (${job.workMode == 'Hybrid'} ? 'bg-primary bg-opacity-25 text-primary' : 'bg-secondary bg-opacity-25 text-secondary'))"
+                                                    style="font-size: 0.7rem;">
+                                                    <i class="fas fa-laptop-house me-1"></i> <span th:text="${job.workMode}">Remote</span>
+                                                </span>
+                                            </div>
                                         </td>
                                         <td>
-                                            <!-- Logic Badge Warna Baru termasuk Hired -->
                                             <span th:class="'badge rounded-pill px-3 ' + 
                                                 (${job.status == 'Applied'} ? 'bg-secondary bg-opacity-10 text-secondary' : 
                                                 (${job.status == 'Interview'} ? 'bg-warning bg-opacity-10 text-warning' : 
@@ -194,6 +186,7 @@
                                                 <a th:href="@{'/jobs/edit/' + ${job.id}}" class="btn btn-sm btn-light text-primary"><i class="fas fa-pen"></i></a>
                                                 <button class="btn btn-sm btn-light text-danger" data-bs-toggle="modal" th:data-bs-target="'#deleteModal' + ${job.id}"><i class="fas fa-trash"></i></button>
                                             </div>
+                                            
                                             <!-- Modal Delete -->
                                             <div class="modal fade text-start" th:id="'deleteModal' + ${job.id}" tabindex="-1">
                                                 <div class="modal-dialog modal-dialog-centered">
@@ -249,7 +242,7 @@
             var interview = /*[[${statInterview}]]*/ 0;
             var rejected = /*[[${statRejected}]]*/ 0;
             var offered = /*[[${statOffered}]]*/ 0;
-            var hired = /*[[${statHired}]]*/ 0; // Data baru
+            var hired = /*[[${statHired}]]*/ 0;
 
             var ctx = document.getElementById('statusChart').getContext('2d');
             var myChart = new Chart(ctx, {

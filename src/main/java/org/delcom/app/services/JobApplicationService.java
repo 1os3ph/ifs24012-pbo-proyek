@@ -60,6 +60,8 @@ public class JobApplicationService {
         // Mapping dari DTO ke Entity
         jobApp.setCompanyName(dto.getCompanyName());
         jobApp.setPosition(dto.getPosition());
+        jobApp.setWorkMode(dto.getWorkMode());
+        jobApp.setLocation(dto.getLocation());
         jobApp.setPlatform(dto.getPlatform());
         jobApp.setStatus(dto.getStatus());
         jobApp.setExpectedSalary(dto.getExpectedSalary());
