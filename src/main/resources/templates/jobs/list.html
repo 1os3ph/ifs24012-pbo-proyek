@@ -4,30 +4,51 @@
     <title>Dashboard</title>
     <style>
         .stat-card {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
-            border-radius: 12px;
+            border-radius: 16px; /* OPTIMASI: Radius lebih besar */
         }
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08); /* OPTIMASI: Shadow lebih halus */
         }
         .icon-box {
-            width: 45px; height: 45px;
+            width: 48px; height: 48px;
             display: flex; align-items: center; justify-content: center;
-            border-radius: 10px;
-            font-size: 1.2rem;
+            border-radius: 12px;
+            font-size: 1.3rem;
         }
         .logo-container {
             width: 48px; 
             height: 48px;
             background-color: #ffffff;
             flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+        /* OPTIMASI: Efek hover pada baris tabel */
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.002);
+            transition: all 0.2s ease;
         }
         .table-card {
-            border-radius: 12px;
+            border-radius: 16px;
             border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            overflow: hidden; /* Agar sudut tabel tumpul */
+        }
+        /* OPTIMASI: Tombol aksi bulat */
+        .btn-action {
+            width: 32px; height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .btn-action:hover {
+            background-color: rgba(0,0,0,0.05);
         }
     </style>
 </head>
@@ -37,58 +58,88 @@
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h3 class="fw-bold text-dark mb-0">Dashboard</h3>
-                <small class="text-muted">Pantau perkembangan karirmu hari ini.</small>
+                <h3 class="fw-bold text-dark mb-1">Dashboard</h3> <!-- mb-1 biar napas -->
+                <p class="text-muted mb-0">Halo, pantau perkembangan karirmu hari ini.</p>
             </div>
-            <a href="/jobs/create" class="btn btn-primary px-4 rounded-pill">
+            <a href="/jobs/create" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
                 <i class="fas fa-plus me-2"></i>Tambah Lamaran
             </a>
         </div>
 
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm border-0" role="alert">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm border-0 mb-4" role="alert">
             <i class="fas fa-check-circle me-2"></i> <span th:text="${success}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
         <!-- 2. Summary Cards -->
         <div class="row g-3 mb-4">
+            <!-- Applied -->
             <div class="col-md">
-                <div class="card stat-card bg-white shadow-sm h-100">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-light text-secondary me-3"><i class="fas fa-paper-plane"></i></div>
-                        <div><h6 class="text-muted mb-0 small">Applied</h6><h4 class="fw-bold mb-0" th:text="${statApplied}">0</h4></div>
+                <div class="card stat-card bg-white h-100">
+                    <div class="card-body d-flex align-items-center p-3">
+                        <div class="icon-box bg-light text-secondary me-3 rounded-circle"> <!-- Rounded circle icon -->
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-0 small text-uppercase fw-bold">Applied</h6>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${statApplied}">0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- Interview -->
             <div class="col-md">
-                <div class="card stat-card bg-white shadow-sm h-100">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-warning bg-opacity-10 text-warning me-3"><i class="fas fa-user-tie"></i></div>
-                        <div><h6 class="text-muted mb-0 small">Interview</h6><h4 class="fw-bold mb-0" th:text="${statInterview}">0</h4></div>
+                <div class="card stat-card bg-white h-100">
+                    <div class="card-body d-flex align-items-center p-3">
+                        <div class="icon-box bg-warning bg-opacity-10 text-warning me-3 rounded-circle">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-0 small text-uppercase fw-bold">Interview</h6>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${statInterview}">0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- Offered -->
             <div class="col-md">
-                <div class="card stat-card bg-white shadow-sm h-100">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-success bg-opacity-10 text-success me-3"><i class="fas fa-check-circle"></i></div>
-                        <div><h6 class="text-muted mb-0 small">Offered</h6><h4 class="fw-bold mb-0" th:text="${statOffered}">0</h4></div>
+                <div class="card stat-card bg-white h-100">
+                    <div class="card-body d-flex align-items-center p-3">
+                        <div class="icon-box bg-success bg-opacity-10 text-success me-3 rounded-circle">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-0 small text-uppercase fw-bold">Offered</h6>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${statOffered}">0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- Hired -->
             <div class="col-md">
-                <div class="card stat-card bg-white shadow-sm h-100 border-primary border-2">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-primary bg-opacity-10 text-primary me-3"><i class="fas fa-briefcase"></i></div>
-                        <div><h6 class="text-muted mb-0 small">Hired</h6><h4 class="fw-bold mb-0" th:text="${statHired}">0</h4></div>
+                <div class="card stat-card bg-white h-100 border-primary border-2"> <!-- Tetap ada border pembeda -->
+                    <div class="card-body d-flex align-items-center p-3">
+                        <div class="icon-box bg-primary text-white me-3 rounded-circle shadow-sm"> <!-- Solid background -->
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-primary mb-0 small text-uppercase fw-bold">Hired</h6>
+                            <h3 class="fw-bold mb-0 text-primary" th:text="${statHired}">0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- Rejected -->
             <div class="col-md">
-                <div class="card stat-card bg-white shadow-sm h-100">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="icon-box bg-danger bg-opacity-10 text-danger me-3"><i class="fas fa-times-circle"></i></div>
-                        <div><h6 class="text-muted mb-0 small">Rejected</h6><h4 class="fw-bold mb-0" th:text="${statRejected}">0</h4></div>
+                <div class="card stat-card bg-white h-100">
+                    <div class="card-body d-flex align-items-center p-3">
+                        <div class="icon-box bg-danger bg-opacity-10 text-danger me-3 rounded-circle">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-0 small text-uppercase fw-bold">Rejected</h6>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${statRejected}">0</h3>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,30 +149,41 @@
             <!-- 3. Tabel Data -->
             <div class="col-lg-8">
                 <div class="card table-card bg-white h-100">
-                    <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="fw-bold mb-0">Riwayat Lamaran Terbaru</h6>
+                    <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-dark">Riwayat Lamaran Terbaru</h6>
+                        <span class="badge bg-light text-dark rounded-pill border" th:text="${#lists.size(jobs) + ' Total'}">0 Total</span>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light">
-                                    <tr class="text-muted small text-uppercase">
-                                        <th class="ps-4">Perusahaan</th>
-                                        <th>Posisi & Gaji</th>
-                                        <th>Platform & Mode</th>
-                                        <th>Status</th>
-                                        <th class="text-end pe-4">Aksi</th>
+                                    <tr class="text-secondary small text-uppercase fw-bold">
+                                        <th class="ps-4 py-3">Perusahaan</th>
+                                        <th class="py-3">Posisi & Gaji</th>
+                                        <th class="py-3">Platform & Mode</th>
+                                        <th class="py-3">Status</th>
+                                        <th class="text-end pe-4 py-3">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="border-top-0">
+                                    <!-- OPTIMASI: Empty State dengan Ilustrasi/Ikon -->
                                     <tr th:if="${#lists.isEmpty(jobs)}">
-                                        <td colspan="5" class="text-center py-5 text-muted">
-                                            <img src="https://cdn-icons-png.flaticon.com/512/7486/7486754.png" width="64" class="mb-3 grayscale" style="opacity: 0.5">
-                                            <p class="mb-0">Belum ada data lamaran.</p>
+                                        <td colspan="5" class="text-center py-5">
+                                            <div class="py-4">
+                                                <div class="mb-3 text-muted opacity-25">
+                                                    <i class="fas fa-clipboard-list fa-4x"></i>
+                                                </div>
+                                                <h6 class="text-muted fw-bold">Belum ada data lamaran</h6>
+                                                <p class="text-muted small mb-3">Mulai perjalanan karirmu sekarang!</p>
+                                                <a href="/jobs/create" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                                    Buat Lamaran Pertama
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
+
                                     <tr th:each="job : ${jobs}">
-                                        <td class="ps-4">
+                                        <td class="ps-4 py-3">
                                             <div class="d-flex align-items-center">
                                                 <div class="logo-container d-flex align-items-center justify-content-center border rounded-3 p-1 me-3 shadow-sm">
                                                     <img th:if="${job.companyLogo != null}" 
@@ -136,72 +198,77 @@
                                                 <div>
                                                     <span class="d-block fw-bold text-dark" th:text="${job.companyName}">Google</span>
                                                     
-                                                    <!-- LOKASI & TANGGAL -->
-                                                    <div class="d-flex flex-column">
+                                                    <div class="d-flex flex-column mt-1">
                                                         <small class="text-muted" style="font-size: 0.75rem;">
                                                             <i class="fas fa-map-marker-alt me-1 text-danger"></i> 
-                                                            <span th:text="${job.location != null ? job.location : '-'}">Jakarta</span>
+                                                            <span th:text="${job.location != null && !job.location.isEmpty() ? job.location : '-'}">Jakarta</span>
                                                         </small>
+                                                        <!-- OPTIMASI: Format Tanggal Manusiawi -->
                                                         <small class="text-muted" style="font-size: 0.75rem;">
-                                                            <i class="fas fa-calendar-alt me-1"></i> 
-                                                            <span th:text="${job.appliedDate}">2023-12-01</span>
+                                                            <i class="far fa-calendar-alt me-1"></i> 
+                                                            <span th:text="${job.appliedDate != null ? #temporals.format(job.appliedDate, 'dd MMM yyyy') : '-'}">01 Jan 2024</span>
                                                         </small>
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="d-block fw-semibold" th:text="${job.position}">Backend</span>
-                                            <small class="text-success" th:if="${job.expectedSalary != null}">
+                                            <span class="d-block fw-bold text-dark" style="font-size: 0.95rem;" th:text="${job.position}">Backend</span>
+                                            <small class="text-success fw-semibold" th:if="${job.expectedSalary != null}">
                                                 Rp <span th:text="${#numbers.formatDecimal(job.expectedSalary, 0, 'COMMA', 0, 'POINT')}"></span>
                                             </small>
                                             <small class="text-muted" th:unless="${job.expectedSalary != null}">-</small>
                                         </td>
                                         <td>
-                                            <!-- Platform Badge -->
-                                            <span class="badge bg-light text-dark border me-1" th:if="${job.platform != null}" th:text="${job.platform}">LinkedIn</span>
+                                            <span class="badge bg-light text-dark border me-1 mb-1" th:if="${job.platform != null}" th:text="${job.platform}">LinkedIn</span>
                                             <span class="text-muted small" th:unless="${job.platform != null}">-</span>
 
-                                            <!-- Work Mode Badge -->
-                                            <div class="mt-1" th:if="${job.workMode != null}">
+                                            <div th:if="${job.workMode != null}">
                                                 <span th:class="'badge ' + 
-                                                    (${job.workMode == 'Remote'} ? 'bg-info text-dark' : 
-                                                    (${job.workMode == 'Hybrid'} ? 'bg-primary bg-opacity-25 text-primary' : 'bg-secondary bg-opacity-25 text-secondary'))"
+                                                    (${job.workMode == 'Remote'} ? 'bg-info bg-opacity-10 text-info border border-info' : 
+                                                    (${job.workMode == 'Hybrid'} ? 'bg-primary bg-opacity-10 text-primary border border-primary' : 
+                                                    'bg-secondary bg-opacity-10 text-secondary border'))"
                                                     style="font-size: 0.7rem;">
                                                     <i class="fas fa-laptop-house me-1"></i> <span th:text="${job.workMode}">Remote</span>
                                                 </span>
                                             </div>
                                         </td>
                                         <td>
-                                            <span th:class="'badge rounded-pill px-3 ' + 
+                                            <!-- Badge Status: Sedikit transparan agar modern -->
+                                            <span th:class="'badge rounded-pill px-3 py-2 fw-normal ' + 
                                                 (${job.status == 'Applied'} ? 'bg-secondary bg-opacity-10 text-secondary' : 
                                                 (${job.status == 'Interview'} ? 'bg-warning bg-opacity-10 text-warning' : 
                                                 (${job.status == 'Offered'} ? 'bg-success bg-opacity-10 text-success' : 
-                                                (${job.status == 'Hired'} ? 'bg-primary bg-opacity-10 text-primary' : 
+                                                (${job.status == 'Hired'} ? 'bg-primary text-white shadow-sm' : 
                                                 'bg-danger bg-opacity-10 text-danger'))))" 
                                                 th:text="${job.status}">Applied</span>
                                         </td>
                                         <td class="text-end pe-4">
-                                            <div class="d-flex justify-content-end gap-2">
-                                                <a th:href="@{'/jobs/edit/' + ${job.id}}" class="btn btn-sm btn-light text-primary"><i class="fas fa-pen"></i></a>
-                                                <button class="btn btn-sm btn-light text-danger" data-bs-toggle="modal" th:data-bs-target="'#deleteModal' + ${job.id}"><i class="fas fa-trash"></i></button>
+                                            <!-- OPTIMASI: Tombol Aksi Bulat -->
+                                            <div class="d-flex justify-content-end gap-1">
+                                                <a th:href="@{'/jobs/edit/' + ${job.id}}" class="btn-action text-primary" title="Edit">
+                                                    <i class="fas fa-pen"></i>
+                                                </a>
+                                                <button class="btn-action text-danger border-0 bg-transparent" data-bs-toggle="modal" th:data-bs-target="'#deleteModal' + ${job.id}" title="Hapus">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </div>
                                             
                                             <!-- Modal Delete -->
                                             <div class="modal fade text-start" th:id="'deleteModal' + ${job.id}" tabindex="-1">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header border-0">
-                                                            <h5 class="modal-title">Hapus Data</h5>
+                                                <div class="modal-dialog modal-dialog-centered modal-sm"> <!-- OPTIMASI: Modal lebih kecil (sm) -->
+                                                    <div class="modal-content border-0 shadow">
+                                                        <div class="modal-header border-0 pb-0">
+                                                            <h6 class="modal-title fw-bold">Konfirmasi Hapus</h6>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <div class="modal-body text-center py-4">
-                                                            <p>Hapus lamaran di <strong th:text="${job.companyName}"></strong>?</p>
+                                                            <p class="text-muted mb-0">Hapus data <strong class="text-dark" th:text="${job.companyName}"></strong>?</p>
                                                         </div>
-                                                        <div class="modal-footer border-0 justify-content-center">
-                                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                                        <div class="modal-footer border-0 justify-content-center pt-0 pb-4">
+                                                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
                                                             <form th:action="@{'/jobs/delete/' + ${job.id}}" method="post">
-                                                                <button type="submit" class="btn btn-danger">Hapus</button>
+                                                                <button type="submit" class="btn btn-danger rounded-pill px-4">Hapus</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -219,16 +286,16 @@
             <!-- 4. Chart -->
             <div class="col-lg-4">
                 <div class="card table-card bg-white h-100">
-                    <div class="card-header bg-white border-0 py-3">
-                        <h6 class="fw-bold mb-0">Statistik</h6>
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h6 class="fw-bold mb-0 text-dark">Statistik</h6>
                     </div>
-                    <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                        <div style="width: 80%; margin: 0 auto;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                        <div style="width: 100%; max-width: 250px; margin: 0 auto;">
                             <canvas id="statusChart"></canvas>
                         </div>
                         <div class="mt-4 text-center">
-                            <small class="text-muted d-block mb-1">Total Lamaran</small>
-                            <h2 class="fw-bold" th:text="${#lists.size(jobs)}">0</h2>
+                            <small class="text-muted d-block mb-1 text-uppercase fw-bold" style="font-size: 0.7rem;">Total Lamaran</small>
+                            <h1 class="fw-bold text-dark display-5" th:text="${#lists.size(jobs)}">0</h1>
                         </div>
                     </div>
                 </div>
@@ -251,16 +318,30 @@
                     labels: ['Applied', 'Interview', 'Rejected', 'Offered', 'Hired'],
                     datasets: [{
                         data: [applied, interview, rejected, offered, hired],
+                        // Warna disesuaikan agar sedikit lebih soft namun kontras
                         backgroundColor: ['#6c757d', '#ffc107', '#dc3545', '#198754', '#0d6efd'],
-                        borderWidth: 0,
-                        hoverOffset: 4
+                        borderWidth: 2,
+                        borderColor: '#ffffff',
+                        hoverOffset: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } }
+                    cutout: '75%', // Lubang tengah lebih besar = lebih modern
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                usePointStyle: true, 
+                                padding: 20,
+                                font: {
+                                    family: "'Poppins', sans-serif",
+                                    size: 11
+                                }
+                            } 
+                        } 
+                    }
                 }
             });
         </script>
