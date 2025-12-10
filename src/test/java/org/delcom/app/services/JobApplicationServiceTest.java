@@ -227,4 +227,29 @@ public class JobApplicationServiceTest {
         //    Ini membuktikan bahwa baris Files.createDirectories() telah dieksekusi.
         assertTrue(Files.exists(nonExistentUploadDir), "Folder upload seharusnya sudah dibuat oleh service");
     }
+
+    @Test
+    @DisplayName("Tidak boleh memproses upload jika file ada tapi kosong (0 byte)")
+    void testSaveJobApplication_WithEmptyFile() throws IOException {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        JobApplicationDTO dto = new JobApplicationDTO();
+        dto.setCompanyName("Empty File Corp");
+        
+        // Buat file yang objeknya ada (tidak null), tapi isinya kosong (byte array 0)
+        MockMultipartFile emptyFile = new MockMultipartFile("logoFile", "empty.png", "image/png", new byte[0]);
+        dto.setLogoFile(emptyFile);
+
+        // Act
+        jobService.saveJobApplication(dto, userId);
+
+        // Assert
+        ArgumentCaptor<JobApplication> captor = ArgumentCaptor.forClass(JobApplication.class);
+        verify(jobRepository, times(1)).save(captor.capture());
+
+        JobApplication savedJob = captor.getValue();
+        // Pastikan nama tersimpan, TAPI logo harus null (karena file kosong dianggap tidak upload)
+        assertEquals("Empty File Corp", savedJob.getCompanyName());
+        assertNull(savedJob.getCompanyLogo(), "Logo harus null karena file kosong");
+    }
 }

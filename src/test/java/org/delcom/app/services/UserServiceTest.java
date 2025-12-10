@@ -197,4 +197,70 @@ public class UserServiceTest {
 
         assertTrue(Files.exists(nonExistentDir));
     }
+
+    @Test
+    @DisplayName("updateUserProfile: Tidak boleh memproses upload jika file ada tapi kosong (0 byte)")
+    void testUpdateUserProfile_WithEmptyFile() throws IOException {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        User existingUser = new User();
+        existingUser.setId(userId);
+        existingUser.setName("Nama Lama");
+        // User awalnya tidak punya foto
+        existingUser.setProfilePicture(null);
+
+        ProfileForm dto = new ProfileForm();
+        dto.setName("Nama Baru");
+        
+        // BUAT FILE KOSONG (0 byte)
+        MockMultipartFile emptyFile = new MockMultipartFile("picture", "empty.png", "image/png", new byte[0]);
+        dto.setProfilePicture(emptyFile);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenReturn(existingUser);
+
+        // Act
+        userService.updateUserProfile(userId, dto);
+
+        // Assert
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(captor.capture());
+        
+        User savedUser = captor.getValue();
+        // Pastikan nama berubah, TAPI foto profil tetap null (logika upload dilewati)
+        assertEquals("Nama Baru", savedUser.getName());
+        assertNull(savedUser.getProfilePicture(), "Foto profil harus null karena file yang diupload kosong");
+    }
+
+    @Test
+    @DisplayName("updateUserProfile: Tidak memproses apapun jika input file adalah NULL")
+    void testUpdateUserProfile_WithNullFile() throws IOException {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        User existingUser = new User();
+        existingUser.setId(userId);
+        existingUser.setName("Nama Lama");
+        existingUser.setProfilePicture("avatar_lama.png");
+
+        ProfileForm dto = new ProfileForm();
+        dto.setName("Nama Baru");
+        // PENTING: Set file menjadi NULL secara eksplisit
+        dto.setProfilePicture(null); 
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenReturn(existingUser);
+
+        // Act
+        userService.updateUserProfile(userId, dto);
+
+        // Assert
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(captor.capture());
+
+        User savedUser = captor.getValue();
+        // Nama berubah
+        assertEquals("Nama Baru", savedUser.getName());
+        // Foto LAMA tidak boleh berubah/hilang karena input barunya null
+        assertEquals("avatar_lama.png", savedUser.getProfilePicture());
+    }
 }

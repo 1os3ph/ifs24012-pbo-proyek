@@ -15,8 +15,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         Path uploadPath = Paths.get(uploadDir);
-        String uploadAbsolutePath = uploadPath.toFile().getAbsolutePath();
+        String resourcePath = uploadPath.toUri().toString();
+        
+        // Spring membutuhkan akhiran "/" untuk menandakan ini adalah direktori
+        if (!resourcePath.endsWith("/")) {
+            resourcePath += "/";
+        }
+
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:/" + uploadAbsolutePath + "/");
+                .addResourceLocations(resourcePath);
     }
 }
