@@ -100,6 +100,8 @@ public class JobApplicationView {
         dto.setExpectedSalary(job.getExpectedSalary());
         dto.setAppliedDate(job.getAppliedDate());
         dto.setNotes(job.getNotes());
+        dto.setLocation(job.getLocation());
+        dto.setWorkMode(job.getWorkMode());
         dto.setExistingLogoPath(job.getCompanyLogo());
         
         model.addAttribute("jobForm", dto);
